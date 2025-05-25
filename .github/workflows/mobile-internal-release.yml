@@ -35,17 +35,23 @@ jobs:
                   flutter-version: ${{ env.FLUTTER_VERSION  }}
                   cache: true
 
-            - name: Setup keys
-              uses: timheuer/base64-to-file@v1
-              with:
-                  fileName: "keystore/ente_photos_key.jks"
-                  encodedString: ${{ secrets.SIGNING_KEY_PHOTOS }}
+            # - name: Setup keys
+            #   uses: timheuer/base64-to-file@v1
+            #   with:
+            #       fileName: "keystore/ente_photos_key.jks"
+            #       encodedString: ${{ secrets.SIGNING_KEY_PHOTOS }}
 
-            - name: Build PlayStore AAB
+            - name: Build independent APK (Debug)
               run: |
-                  flutter build appbundle --dart-define=cronetHttpNoPlay=true --release --flavor playstore
-              env:
-                  SIGNING_KEY_PATH: "/home/runner/work/_temp/keystore/ente_photos_key.jks"
-                  SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS_PHOTOS }}
-                  SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD_PHOTOS }}
-                  SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD_PHOTOS }}
+                  flutter build apk --dart-define=cronetHttpNoPlay=true --debug --flavor independent
+                  mkdir -p artifacts
+                  mv build/app/outputs/flutter-apk/app-independent-debug.apk artifacts/ente-${{ github.ref_name }}-debug.apk
+
+            # - name: Build PlayStore AAB
+            #   run: |
+            #       flutter build appbundle --dart-define=cronetHttpNoPlay=true --release --flavor playstore
+            #   env:
+            #       SIGNING_KEY_PATH: "/home/runner/work/_temp/keystore/ente_photos_key.jks"
+            #       SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS_PHOTOS }}
+            #       SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD_PHOTOS }}
+            #       SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD_PHOTOS }}

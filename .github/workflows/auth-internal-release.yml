@@ -45,7 +45,7 @@ jobs:
               run: |
                   flutter build apk --dart-define=cronetHttpNoPlay=true --debug --flavor independent
                   mkdir -p artifacts
-                  mv build/app/outputs/flutter-apk/app-independent-debug.apk artifacts/ente-auth-${{ github.ref_name }}-debug.apk # Changed for auth
+                  mv build/app/outputs/flutter-apk/app-independent-debug.apk artifacts/ente-auth-debug.apk # Changed to a fixed name
 
             # - name: Build PlayStore AAB
             #   run: |
@@ -55,3 +55,17 @@ jobs:
             #       SIGNING_KEY_ALIAS: ${{ secrets.SIGNING_KEY_ALIAS_AUTH }} # Changed for auth
             #       SIGNING_KEY_PASSWORD: ${{ secrets.SIGNING_KEY_PASSWORD_AUTH }} # Changed for auth
             #       SIGNING_STORE_PASSWORD: ${{ secrets.SIGNING_STORE_PASSWORD_AUTH }} # Changed for auth
+
+            - name: Upload Debug APK to Release
+              uses: softprops/action-gh-release@v2
+              with:
+                files: auth/artifacts/ente-auth-debug.apk
+                tag_name: auth-debug-run-${{ github.run_id }} # Creates a unique tag for this run
+                name: "Auth Debug Build (Run ${{ github.run_id }})"
+                body: |
+                  Internal debug build of the Ente Auth application.
+                  Triggered from ref: ${{ github.ref }}
+                  Workflow Run ID: ${{ github.run_id }}
+                  Workflow Run Number: ${{ github.run_number }}
+                draft: false
+                prerelease: true # Mark as pre-release
